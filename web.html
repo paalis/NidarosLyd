@@ -1,1 +1,578 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nidaros Lyd – Salg · Installasjon · Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --green: #6EE040;
+    --green-dim: #3a7a1e;
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --text: #e8e8e8;
+    --muted: #888;
+    --border: rgba(110,224,64,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2rem;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.06em;
+    color: #fff;
+  }
+  .nav-logo span { color: var(--green); }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  /* Animated sound-wave bg */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .hero-bg svg {
+    position: absolute;
+    bottom: 25%;
+    left: -5%;
+    width: 110%;
+    opacity: 0.55;
+    animation: waveDrift 8s ease-in-out infinite alternate;
+  }
+  @keyframes waveDrift {
+    from { transform: translateY(0) scaleY(1); }
+    to   { transform: translateY(-18px) scaleY(1.08); }
+  }
+
+  /* radial glow */
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    top: 40%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70vw; height: 40vw;
+    background: radial-gradient(ellipse, rgba(110,224,64,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp .6s .1s forwards;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 14vw, 9rem);
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+    color: #fff;
+    opacity: 0;
+    animation: fadeUp .7s .25s forwards;
+  }
+  .hero-title span { color: var(--green); }
+
+  .hero-tagline {
+    margin-top: 1.8rem;
+    font-size: 1.05rem;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    animation: fadeUp .7s .45s forwards;
+  }
+
+  .hero-cta {
+    margin-top: 2.8rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp .7s .6s forwards;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: #0a0a0a;
+    border: none;
+    padding: 0.85rem 2.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: background .2s, transform .15s;
+  }
+  .btn-primary:hover { background: #8fff5a; transform: translateY(-2px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.85rem 2.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: border-color .2s, color .2s, transform .15s;
+  }
+  .btn-ghost:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SERVICES STRIP ── */
+  .services-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .service-item {
+    padding: 2.2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    transition: background .2s;
+  }
+  .service-item:last-child { border-right: none; }
+  .service-item:hover { background: var(--surface); }
+  .service-icon {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 8px var(--green));
+  }
+  .service-name {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 5rem 2rem; }
+  .section-inner { max-width: 960px; margin: 0 auto; }
+  .section-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: 0.04em;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── TEAM ── */
+  #kontakt { background: var(--surface); }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5px;
+    margin-top: 2.5rem;
+    border: 1.5px solid var(--border);
+  }
+  .team-card {
+    background: var(--surface2);
+    padding: 2rem 1.8rem;
+    transition: background .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .team-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--green);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s;
+  }
+  .team-card:hover { background: #1c1c1c; }
+  .team-card:hover::before { transform: scaleX(1); }
+
+  .team-role {
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 0.5rem;
+  }
+  .team-name {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 1.2rem;
+    line-height: 1.3;
+  }
+  .team-phone {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text);
+    text-decoration: none;
+    margin-bottom: 0.4rem;
+    transition: color .2s;
+  }
+  .team-phone:hover { color: var(--green); }
+  .team-email {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color .2s;
+    word-break: break-all;
+  }
+  .team-email:hover { color: var(--green); }
+
+  /* ── ADDRESS ── */
+  #adresse { background: var(--bg); }
+  .address-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 2.5rem;
+  }
+  .address-block p {
+    font-size: 1rem;
+    line-height: 2;
+    color: var(--text);
+  }
+  .address-block a {
+    color: var(--green);
+    text-decoration: none;
+  }
+  .address-block a:hover { text-decoration: underline; }
+  .address-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+  }
+  #map {
+    height: 260px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 0;
+  }
+  /* Dark filter on tiles */
+  .leaflet-tile { filter: brightness(0.7) saturate(0.6); }
+  /* Green marker pulse */
+  .pulse-marker {
+    width: 16px; height: 16px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(110,224,64,0.6);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(110,224,64,0.6); }
+    70%  { box-shadow: 0 0 0 12px rgba(110,224,64,0); }
+    100% { box-shadow: 0 0 0 0 rgba(110,224,64,0); }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: #fff;
+    letter-spacing: 0.06em;
+  }
+  .footer-logo span { color: var(--green); }
+  .footer-meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+    text-align: right;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 640px) {
+    nav { padding: 1rem 1.2rem; }
+    .nav-links { display: none; }
+    .services-strip { grid-template-columns: repeat(3, 1fr); }
+    .service-item { padding: 1.4rem 0.8rem; }
+    .address-grid { grid-template-columns: 1fr; gap: 2rem; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .footer-meta { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">NIDAROS <span>LYD</span></div>
+  <ul class="nav-links">
+    <li><a href="#kontakt">Kontakt</a></li>
+    <li><a href="#adresse">Adresse</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <svg viewBox="0 0 1440 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#3a7a1e" stop-opacity="0"/>
+          <stop offset="25%"  stop-color="#6EE040" stop-opacity="0.9"/>
+          <stop offset="50%"  stop-color="#c8f000" stop-opacity="0.7"/>
+          <stop offset="75%"  stop-color="#6EE040" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#3a7a1e" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="wg2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#f07000" stop-opacity="0"/>
+          <stop offset="40%"  stop-color="#f0a000" stop-opacity="0.5"/>
+          <stop offset="60%"  stop-color="#f07000" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#f07000" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- Main wave -->
+      <path d="M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110"
+            fill="none" stroke="url(#wg)" stroke-width="3">
+        <animate attributeName="d"
+          dur="6s" repeatCount="indefinite"
+          values="
+            M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110;
+            M0,130 C200,80 320,150 520,90 C720,30 800,170 1000,120 C1200,70 1300,140 1440,100;
+            M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110"
+        />
+      </path>
+      <!-- Secondary wave -->
+      <path d="M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130"
+            fill="none" stroke="url(#wg2)" stroke-width="1.5" opacity="0.7">
+        <animate attributeName="d"
+          dur="9s" repeatCount="indefinite"
+          values="
+            M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130;
+            M0,120 C180,160 340,90 560,140 C780,190 920,80 1120,120 C1320,160 1400,100 1440,120;
+            M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130"
+        />
+      </path>
+      <!-- Glow wave -->
+      <path d="M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110"
+            fill="none" stroke="url(#wg)" stroke-width="12" opacity="0.08">
+      </path>
+    </svg>
+  </div>
+
+  <p class="hero-label">Trondheim · Heimdal</p>
+  <h1 class="hero-title">NIDAROS <span>LYD</span></h1>
+  <p class="hero-tagline">Vi jobber med noe som låter bra – følg med!</p>
+  <div class="hero-cta">
+    <a href="#kontakt" class="btn-primary">Ta kontakt</a>
+    <a href="tel:+4797974500" class="btn-ghost">+47 979 74 500</a>
+  </div>
+</section>
+
+<!-- SERVICES STRIP -->
+<div class="services-strip">
+  <div class="service-item">
+    <div class="service-icon">🛒</div>
+    <div class="service-name">Salg</div>
+  </div>
+  <div class="service-item">
+    <div class="service-icon">🔧</div>
+    <div class="service-name">Installasjon</div>
+  </div>
+  <div class="service-item">
+    <div class="service-icon">⚙️</div>
+    <div class="service-name">Service</div>
+  </div>
+</div>
+
+<!-- TEAM / CONTACT -->
+<section id="kontakt">
+  <div class="section-inner">
+    <p class="section-tag">Teamet vårt</p>
+    <h2 class="section-title">Kontakt oss</h2>
+
+    <div class="team-grid">
+      <!-- Prosjektledere -->
+      <div class="team-card">
+        <div class="team-role">Prosjektleder</div>
+        <div class="team-name">Sindre Eikli</div>
+        <a class="team-phone" href="tel:92699009">📞 926 99 009</a>
+        <a class="team-email" href="mailto:sindre@nidaroslyd.no">✉ sindre@nidaroslyd.no</a>
+      </div>
+
+      <div class="team-card">
+        <div class="team-role">Prosjektleder</div>
+        <div class="team-name">Steffen Wevang Karlsen</div>
+        <a class="team-phone" href="tel:46614343">📞 466 14 343</a>
+        <a class="team-email" href="mailto:steffen@nidaroslyd.no">✉ steffen@nidaroslyd.no</a>
+      </div>
+
+      <div class="team-card">
+        <div class="team-role">Prosjektleder</div>
+        <div class="team-name">Arnstein Fossvik</div>
+        <a class="team-phone" href="tel:90746505">📞 907 46 505</a>
+        <a class="team-email" href="mailto:arnstein@nidaroslyd.no">✉ arnstein@nidaroslyd.no</a>
+      </div>
+
+      <div class="team-card" style="background: #141a10; border-left: 2px solid var(--green);">
+        <div class="team-role">Daglig leder</div>
+        <div class="team-name">Magnus Galguften</div>
+        <a class="team-phone" href="tel:41841075">📞 418 41 075</a>
+        <a class="team-email" href="mailto:magnus@nidaroslyd.no">✉ magnus@nidaroslyd.no</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADDRESS -->
+<section id="adresse">
+  <div class="section-inner">
+    <p class="section-tag">Finn oss</p>
+    <h2 class="section-title">Adresse</h2>
+
+    <div class="address-grid">
+      <div>
+        <div class="address-label">Besøksadresse</div>
+        <p>
+          Nidaros Lyd AS<br>
+          Heggstadmoen 51<br>
+          7080 Heimdal
+        </p>
+        <br>
+        <div class="address-label">Kontakt</div>
+        <p>
+          Tlf: <a href="tel:+4797974500">+47 979 74 500</a><br>
+          Org.nr: 935 096 588 MVA
+        </p>
+      </div>
+      <div id="map"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">NIDAROS <span>LYD</span></div>
+  <div class="footer-meta">
+    Nidaros Lyd AS · Org.nr 935 096 588 MVA<br>
+    Heggstadmoen 51, 7080 Heimdal
+  </div>
+</footer>
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+  // Heggstadmoen 51, 7080 Heimdal
+  const lat = 63.330624, lng = 10.351045;
+
+  const map = L.map('map', { zoomControl: false, scrollWheelZoom: false }).setView([lat, lng], 15);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19
+  }).addTo(map);
+
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+  // Custom green pulse marker
+  const icon = L.divIcon({
+    className: '',
+    html: '<div class="pulse-marker"></div>',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+    popupAnchor: [0, -12]
+  });
+
+  L.marker([lat, lng], { icon })
+    .addTo(map)
+    .bindPopup('<strong>Nidaros Lyd AS</strong><br>Heggstadmoen 51, 7080 Heimdal')
+    .openPopup();
+</script>
+</body>
+</html>
