@@ -120,12 +120,6 @@
     line-height: 0.95;
     color: var(--heading);
   }
-  .eyebrow {
-    font-size: 0.72rem;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
   .lede { color: var(--muted); max-width: 58ch; }
 
   /* ── NAV ─────────────────────────────────────────────────── */
@@ -240,7 +234,7 @@
     max-width: 16ch;
     /* looser than .display: the ring on A-ring needs to clear the line above */
     line-height: 1.06;
-    margin: 1.1rem 0 1.4rem;
+    margin: 0 0 1.4rem;
   }
   .hero-title em { font-style: normal; color: var(--accent); }
   .hero-lede { font-size: 1.05rem; }
@@ -667,13 +661,12 @@
   <section class="hero">
     <div class="shell hero-grid">
       <div>
-        <p class="eyebrow rise">Trondheim og Trøndelag</p>
-        <h1 class="display hero-title rise d1">Lydanlegg som <em>låter bra</em></h1>
-        <p class="lede hero-lede rise d2">
+        <h1 class="display hero-title rise">Lydanlegg som <em>låter bra</em></h1>
+        <p class="lede hero-lede rise d1">
           Salg, installasjon og service av lyd- og AV-anlegg for bedrifter,
           arrangører og offentlige bygg i Trøndelag.
         </p>
-        <div class="hero-actions rise d3">
+        <div class="hero-actions rise d2">
           <a class="btn btn-primary" href="#kontakt">
             Ta kontakt
             <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
@@ -685,7 +678,7 @@
         </div>
       </div>
 
-      <div class="hero-visual rise d2">
+      <div class="hero-visual rise d1">
         <div class="frame hero-frame">
           <!-- TODO: bytt ut med eget bilde, 1200x1500, av et anlegg Nidaros Lyd har montert -->
           <img src="https://picsum.photos/seed/nidaroslyd-hero/1200/1500"
