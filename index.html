@@ -12,12 +12,28 @@
 <meta property="og:title" content="Nidaros Lyd · Salg, installasjon og service av lydanlegg">
 <meta property="og:description" content="Salg, installasjon og service av lyd- og AV-anlegg i Trondheim og Trøndelag.">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/dm-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bebas-neue-latin-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 
 <style>
+  /* Self-hosted, latin subset. See fonts/README.md for provenance;
+     both families are OFL 1.1 and the licenses ship in fonts/. */
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 100 1000;          /* variable weight axis */
+    font-display: swap;
+    src: url('fonts/dm-sans-latin-variable.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Bebas Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('fonts/bebas-neue-latin-400.woff2') format('woff2');
+  }
+
   /* ============================================================
      NIDAROS LYD
      Dark, single-accent brand system. One theme (dark), one accent
@@ -217,10 +233,13 @@
     width: 100%;
   }
   .hero-title {
-    /* sized so the headline holds at two lines from 360px up, in the
-       fallback face as well as in Bebas Neue */
+    /* sized so the headline holds at two lines from 360px up, in Bebas
+       Neue and in the swap fallback alike. Note ch is font-relative and
+       Bebas is condensed, so this is wider than it reads. */
     font-size: clamp(2.9rem, 7.5vw, 5.4rem);
-    max-width: 12ch;
+    max-width: 16ch;
+    /* looser than .display: the ring on A-ring needs to clear the line above */
+    line-height: 1.06;
     margin: 1.1rem 0 1.4rem;
   }
   .hero-title em { font-style: normal; color: var(--accent); }
