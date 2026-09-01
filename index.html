@@ -3,20 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nidaros Lyd – Salg · Installasjon · Service</title>
+<title>Nidaros Lyd · Salg, installasjon og service av lydanlegg i Trondheim</title>
+<meta name="description" content="Nidaros Lyd AS på Heggstadmoen i Heimdal leverer salg, installasjon og service av lyd- og AV-anlegg i Trondheim og Trøndelag.">
+<meta name="theme-color" content="#0a0a0a">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="nb_NO">
+<meta property="og:site_name" content="Nidaros Lyd AS">
+<meta property="og:title" content="Nidaros Lyd · Salg, installasjon og service av lydanlegg">
+<meta property="og:description" content="Salg, installasjon og service av lyd- og AV-anlegg i Trondheim og Trøndelag.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+
 <style>
+  /* ============================================================
+     NIDAROS LYD
+     Dark, single-accent brand system. One theme (dark), one accent
+     (Nidaros green), one radius scale (4px).
+     ============================================================ */
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --green: #6EE040;
-    --green-dim: #3a7a1e;
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface2: #181818;
-    --text: #e8e8e8;
-    --muted: #888;
-    --border: rgba(110,224,64,0.15);
+    color-scheme: dark;
+
+    /* surfaces */
+    --bg:        #0a0a0a;
+    --surface:   #101010;
+    --surface-2: #161616;
+    --surface-3: #1c1c1c;
+
+    /* text */
+    --text:   #ededed;
+    --heading:#ffffff;
+    --muted:  #9a9a9a;
+
+    /* the one accent */
+    --accent:        #6ee040;
+    --accent-strong: #8dff5f;
+    --accent-dim:    #3a7a1e;
+    --accent-wash:   rgba(110, 224, 64, 0.10);
+
+    /* lines */
+    --line:        rgba(255, 255, 255, 0.09);
+    --line-accent: rgba(110, 224, 64, 0.22);
+
+    /* system */
+    --r: 4px;
+    --nav-h: 68px;
+    --shell: 1180px;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   html { scroll-behavior: smooth; }
@@ -24,555 +62,911 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
     font-weight: 300;
-    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
 
-  /* ── NAV ── */
-  nav {
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .shell { width: 100%; max-width: var(--shell); margin: 0 auto; padding: 0 1.5rem; }
+
+  .skip-link {
+    position: absolute;
+    left: 1rem; top: -100px;
+    z-index: 200;
+    background: var(--accent);
+    color: #0a0a0a;
+    padding: 0.7rem 1.2rem;
+    border-radius: var(--r);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: top .2s var(--ease);
+  }
+  .skip-link:focus { top: 1rem; }
+
+  .icon { width: 1em; height: 1em; flex: none; display: block; }
+
+  /* ── TYPE ────────────────────────────────────────────────── */
+  .display {
+    font-family: 'Bebas Neue', 'DM Sans', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 0.95;
+    color: var(--heading);
+  }
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .lede { color: var(--muted); max-width: 58ch; }
+
+  /* ── NAV ─────────────────────────────────────────────────── */
+  .nav {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    inset: 0 0 auto 0;
     z-index: 100;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    background: rgba(10, 10, 10, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.2rem 2rem;
-    background: rgba(10,10,10,0.85);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
+    gap: 1.5rem;
   }
-  .nav-logo {
+  .wordmark {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 0.06em;
-    color: #fff;
+    font-size: 1.55rem;
+    letter-spacing: 0.07em;
+    color: var(--heading);
+    text-decoration: none;
+    white-space: nowrap;
   }
-  .nav-logo span { color: var(--green); }
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
+  .wordmark span { color: var(--accent); }
+
+  .nav-menu { margin-left: auto; }
+  .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+  .nav-links { display: flex; gap: 1.8rem; list-style: none; }
   .nav-links a {
+    font-size: 0.8rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
     color: var(--muted);
     text-decoration: none;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    transition: color .2s;
+    transition: color .2s var(--ease);
+    white-space: nowrap;
   }
-  .nav-links a:hover { color: var(--green); }
+  .nav-links a:hover { color: var(--accent); }
 
-  /* ── HERO ── */
+  .nav-call {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    text-decoration: none;
+    padding: 0.5rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    white-space: nowrap;
+    transition: border-color .2s var(--ease), color .2s var(--ease);
+  }
+  .nav-call:hover { border-color: var(--line-accent); color: var(--accent); }
+  .nav-call .icon { font-size: 0.95rem; color: var(--accent); }
+
+  .nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 42px; height: 42px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    color: var(--text);
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+  .nav-toggle .icon-close { display: none; }
+  .nav-toggle[aria-expanded="true"] .icon-open { display: none; }
+  .nav-toggle[aria-expanded="true"] .icon-close { display: block; }
+
+  /* ── HERO ────────────────────────────────────────────────── */
   .hero {
     position: relative;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 6rem 2rem 4rem;
+    padding-top: calc(var(--nav-h) + 2rem);
+    padding-bottom: 3rem;
     overflow: hidden;
   }
-
-  /* Animated sound-wave bg */
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-  .hero-bg svg {
-    position: absolute;
-    bottom: 25%;
-    left: -5%;
-    width: 110%;
-    opacity: 0.55;
-    animation: waveDrift 8s ease-in-out infinite alternate;
-  }
-  @keyframes waveDrift {
-    from { transform: translateY(0) scaleY(1); }
-    to   { transform: translateY(-18px) scaleY(1.08); }
-  }
-
-  /* radial glow */
-  .hero-bg::after {
+  .hero::before {
     content: '';
     position: absolute;
-    top: 40%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70vw; height: 40vw;
-    background: radial-gradient(ellipse, rgba(110,224,64,0.08) 0%, transparent 70%);
+    top: 30%; right: -10%;
+    width: 65vw; height: 55vw;
+    max-width: 900px; max-height: 700px;
+    background: radial-gradient(ellipse at center, rgba(110, 224, 64, 0.10) 0%, transparent 68%);
     pointer-events: none;
   }
-
-  .hero-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 1.2rem;
-    opacity: 0;
-    animation: fadeUp .6s .1s forwards;
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.05fr 0.85fr;
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+    width: 100%;
   }
   .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4rem, 14vw, 9rem);
-    letter-spacing: 0.04em;
-    line-height: 0.95;
-    color: #fff;
-    opacity: 0;
-    animation: fadeUp .7s .25s forwards;
+    /* sized so the headline holds at two lines from 360px up, in the
+       fallback face as well as in Bebas Neue */
+    font-size: clamp(2.9rem, 7.5vw, 5.4rem);
+    max-width: 12ch;
+    margin: 1.1rem 0 1.4rem;
   }
-  .hero-title span { color: var(--green); }
+  .hero-title em { font-style: normal; color: var(--accent); }
+  .hero-lede { font-size: 1.05rem; }
 
-  .hero-tagline {
-    margin-top: 1.8rem;
-    font-size: 1.05rem;
-    color: var(--muted);
-    font-weight: 300;
-    letter-spacing: 0.04em;
-    opacity: 0;
-    animation: fadeUp .7s .45s forwards;
-  }
-
-  .hero-cta {
-    margin-top: 2.8rem;
+  .hero-actions {
     display: flex;
-    gap: 1rem;
     flex-wrap: wrap;
-    justify-content: center;
-    opacity: 0;
-    animation: fadeUp .7s .6s forwards;
+    gap: 0.9rem;
+    margin-top: 2.2rem;
   }
-  .btn-primary {
-    background: var(--green);
-    color: #0a0a0a;
-    border: none;
-    padding: 0.85rem 2.2rem;
-    font-family: 'DM Sans', sans-serif;
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.7rem;
+    border-radius: var(--r);
+    font-family: inherit;
     font-size: 0.85rem;
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 3px;
     text-decoration: none;
-    transition: background .2s, transform .15s;
-  }
-  .btn-primary:hover { background: #8fff5a; transform: translateY(-2px); }
-
-  .btn-ghost {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid rgba(255,255,255,0.2);
-    padding: 0.85rem 2.2rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    white-space: nowrap;
     cursor: pointer;
-    border-radius: 3px;
-    text-decoration: none;
-    transition: border-color .2s, color .2s, transform .15s;
+    transition: background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease), transform .15s var(--ease);
   }
-  .btn-ghost:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
+  .btn .icon { font-size: 1.05rem; }
+  .btn-primary { background: var(--accent); color: #0a0a0a; border: 1px solid var(--accent); }
+  .btn-primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); transform: translateY(-2px); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1px solid rgba(255, 255, 255, 0.22); font-weight: 400; }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .btn-ghost:active { transform: scale(0.98); }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(22px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── SERVICES STRIP ── */
-  .services-strip {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .service-item {
-    padding: 2.2rem 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-    text-align: center;
-    border-right: 1px solid var(--border);
-    transition: background .2s;
-  }
-  .service-item:last-child { border-right: none; }
-  .service-item:hover { background: var(--surface); }
-  .service-icon {
-    font-size: 1.8rem;
-    filter: drop-shadow(0 0 8px var(--green));
-  }
-  .service-name {
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  /* ── SECTION SHARED ── */
-  section { padding: 5rem 2rem; }
-  .section-inner { max-width: 960px; margin: 0 auto; }
-  .section-tag {
-    font-size: 0.7rem;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 0.8rem;
-  }
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    letter-spacing: 0.04em;
-    color: #fff;
-    margin-bottom: 1.5rem;
-  }
-
-  /* ── TEAM ── */
-  #kontakt { background: var(--surface); }
-
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5px;
-    margin-top: 2.5rem;
-    border: 1.5px solid var(--border);
-  }
-  .team-card {
-    background: var(--surface2);
-    padding: 2rem 1.8rem;
-    transition: background .2s;
+  /* hero visual: photo frame with the waveform motif along its base */
+  .hero-visual { position: relative; }
+  .frame {
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--surface-2);
   }
-  .team-card::before {
+  .frame img {
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.08) brightness(0.7);
+  }
+  .frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(200deg, rgba(110, 224, 64, 0.13) 0%, transparent 45%),
+      linear-gradient(0deg, rgba(10, 10, 10, 0.85) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .hero-frame { aspect-ratio: 4 / 5; }
+  .hero-wave {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 34%;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .hero-wave svg { width: 100%; height: 100%; }
+
+  /* ── STATUS BAND ─────────────────────────────────────────── */
+  .band {
+    border-top: 1px solid var(--line-accent);
+    border-bottom: 1px solid var(--line-accent);
+    background: var(--surface);
+  }
+  .band-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1.15rem 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .band-inner .icon { font-size: 1.15rem; color: var(--accent); }
+
+  /* ── SECTIONS ────────────────────────────────────────────── */
+  section { padding: clamp(4rem, 9vw, 7rem) 0; scroll-margin-top: var(--nav-h); }
+  .section-title { font-size: clamp(2.2rem, 5.5vw, 3.6rem); }
+  .section-head { margin-bottom: 2.8rem; max-width: 40ch; }
+  .section-head .lede { margin-top: 1rem; }
+
+  /* ── SERVICES (bento, 3 items → 3 cells) ─────────────────── */
+  #tjenester { background: var(--bg); }
+  .bento {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    grid-template-rows: repeat(2, minmax(190px, auto));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+  .cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.7rem;
+    padding: 2rem;
+    background: var(--surface);
+    transition: background .25s var(--ease);
+  }
+  .cell:hover { background: var(--surface-3); }
+  .cell-lead { grid-row: span 2; justify-content: flex-end; padding: 2.4rem; }
+  .cell-lead .cell-body { max-width: 34ch; }
+
+  /* cell 1: photograph */
+  .cell-media { position: absolute; inset: 0; z-index: 0; }
+  .cell-media img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.05) brightness(0.5);
+  }
+  .cell-media::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(0deg, rgba(10, 10, 10, 0.92) 12%, rgba(10, 10, 10, 0.35) 100%);
+  }
+  .cell-lead > *:not(.cell-media) { position: relative; z-index: 1; }
+
+  /* cell 2: accent wash */
+  .cell-wash {
+    background:
+      linear-gradient(150deg, var(--accent-wash) 0%, transparent 60%),
+      var(--surface);
+  }
+  .cell-wash:hover { background: linear-gradient(150deg, rgba(110,224,64,0.16) 0%, transparent 60%), var(--surface-3); }
+
+  .cell-icon { font-size: 1.6rem; color: var(--accent); margin-bottom: auto; }
+  .cell-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.9rem;
+    letter-spacing: 0.05em;
+    color: var(--heading);
+    line-height: 1;
+  }
+  .cell-body { font-size: 0.94rem; color: var(--muted); }
+
+  /* ── CONTACT ─────────────────────────────────────────────── */
+  #kontakt { background: var(--surface); border-top: 1px solid var(--line); }
+  .people {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+  .person {
+    position: relative;
+    background: var(--surface-2);
+    padding: 2rem 1.9rem;
+    transition: background .25s var(--ease);
+  }
+  .person::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 2px;
-    background: var(--green);
+    background: var(--accent);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform .3s;
+    transition: transform .35s var(--ease);
   }
-  .team-card:hover { background: #1c1c1c; }
-  .team-card:hover::before { transform: scaleX(1); }
+  .person:hover { background: var(--surface-3); }
+  .person:hover::before { transform: scaleX(1); }
+  .person.is-lead { background: #131a0f; }
+  .person.is-lead:hover { background: #182010; }
 
-  .team-role {
-    font-size: 0.65rem;
-    letter-spacing: 0.22em;
+  .person-role {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 0.5rem;
+    color: var(--accent);
   }
-  .team-name {
-    font-size: 1.05rem;
+  .person-name {
+    font-size: 1.15rem;
     font-weight: 500;
-    color: #fff;
-    margin-bottom: 1.2rem;
+    color: var(--heading);
     line-height: 1.3;
+    margin: 0.45rem 0 1.2rem;
   }
-  .team-phone {
-    display: flex;
+  .person-link {
+    display: flex;                 /* block-level so the two links stack */
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--text);
+    gap: 0.6rem;
+    width: max-content;
+    max-width: 100%;
     text-decoration: none;
-    margin-bottom: 0.4rem;
-    transition: color .2s;
+    transition: color .2s var(--ease);
+    word-break: break-word;
   }
-  .team-phone:hover { color: var(--green); }
-  .team-email {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.82rem;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color .2s;
-    word-break: break-all;
-  }
-  .team-email:hover { color: var(--green); }
+  .person-link + .person-link { margin-top: 0.5rem; }
+  .person-link .icon { font-size: 1rem; color: var(--accent); }
+  .person-tel { font-size: 0.98rem; color: var(--text); }
+  .person-mail { font-size: 0.88rem; color: var(--muted); }
+  .person-link:hover { color: var(--accent); }
 
-  /* ── ADDRESS ── */
-  #adresse { background: var(--bg); }
+  /* ── ADDRESS ─────────────────────────────────────────────── */
+  #adresse { background: var(--bg); border-top: 1px solid var(--line); }
   .address-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    margin-top: 2.5rem;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: start;
   }
-  .address-block p {
-    font-size: 1rem;
-    line-height: 2;
-    color: var(--text);
-  }
-  .address-block a {
-    color: var(--green);
-    text-decoration: none;
-  }
-  .address-block a:hover { text-decoration: underline; }
   .address-label {
     font-size: 0.68rem;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
   }
+  .address-block { font-size: 1rem; line-height: 1.9; color: var(--text); }
+  .address-block + .address-label { margin-top: 2rem; }
+  .address-block a { color: var(--accent); text-decoration: none; }
+  .address-block a:hover { text-decoration: underline; }
+  .map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.8rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .map-link:hover { text-decoration: underline; }
+  .map-link .icon { font-size: 1rem; }
+
   #map {
-    height: 260px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    height: 340px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
     overflow: hidden;
+    background: var(--surface-2);
     z-index: 0;
   }
-  /* Dark filter on tiles */
-  .leaflet-tile { filter: brightness(0.7) saturate(0.6); }
-  /* Green marker pulse */
+  .map-fallback {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .map-fallback a { color: var(--accent); }
+  .leaflet-tile { filter: brightness(0.68) saturate(0.55) contrast(1.05); }
+  .leaflet-container { background: var(--surface-2); }
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: var(--surface-3);
+    color: var(--text);
+    border-radius: var(--r);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+  .leaflet-container a.leaflet-popup-close-button { color: var(--muted); }
   .pulse-marker {
     width: 16px; height: 16px;
-    background: var(--green);
+    background: var(--accent);
     border-radius: 50%;
-    box-shadow: 0 0 0 0 rgba(110,224,64,0.6);
-    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 0 rgba(110, 224, 64, 0.55);
+    animation: pulse 2.4s infinite;
   }
   @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(110,224,64,0.6); }
-    70%  { box-shadow: 0 0 0 12px rgba(110,224,64,0); }
-    100% { box-shadow: 0 0 0 0 rgba(110,224,64,0); }
+    0%   { box-shadow: 0 0 0 0 rgba(110, 224, 64, 0.55); }
+    70%  { box-shadow: 0 0 0 14px rgba(110, 224, 64, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(110, 224, 64, 0); }
   }
 
-  /* ── FOOTER ── */
+  /* ── FOOTER ──────────────────────────────────────────────── */
   footer {
-    border-top: 1px solid var(--border);
-    padding: 2rem;
-    display: flex;
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    padding: 2.5rem 0;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.5rem 2.5rem;
   }
-  .footer-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
-    color: #fff;
-    letter-spacing: 0.06em;
-  }
-  .footer-logo span { color: var(--green); }
-  .footer-meta {
-    font-size: 0.75rem;
+  .footer-nav { display: flex; gap: 1.5rem; list-style: none; justify-self: center; }
+  .footer-nav a {
+    font-size: 0.78rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
     color: var(--muted);
-    line-height: 1.8;
-    text-align: right;
+    text-decoration: none;
+    transition: color .2s var(--ease);
   }
+  .footer-nav a:hover { color: var(--accent); }
+  .footer-meta { font-size: 0.78rem; color: var(--muted); line-height: 1.8; text-align: right; }
 
-  /* ── MOBILE ── */
-  @media (max-width: 640px) {
-    nav { padding: 1rem 1.2rem; }
-    .nav-links { display: none; }
-    .services-strip { grid-template-columns: repeat(3, 1fr); }
-    .service-item { padding: 1.4rem 0.8rem; }
-    .address-grid { grid-template-columns: 1fr; gap: 2rem; }
-    footer { flex-direction: column; align-items: flex-start; }
+  /* ── MOTION ──────────────────────────────────────────────── */
+  .rise { opacity: 0; transform: translateY(24px); }
+  .is-in { opacity: 1; transform: none; transition: opacity .7s var(--ease), transform .7s var(--ease); }
+  .d1 { transition-delay: .08s; }
+  .d2 { transition-delay: .16s; }
+  .d3 { transition-delay: .24s; }
+  .no-motion .rise { opacity: 1; transform: none; }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .hero-frame { aspect-ratio: 16 / 10; }
+
+    .bento { grid-template-columns: 1fr; grid-template-rows: none; }
+    .cell-lead { grid-row: auto; min-height: 280px; }
+    .address-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; justify-items: start; }
+    .footer-nav { justify-self: start; flex-wrap: wrap; }
     .footer-meta { text-align: left; }
   }
+
+  @media (max-width: 760px) {
+    .nav-toggle { display: inline-flex; }
+    .wordmark { font-size: 1.35rem; }
+    /* the phone stays in the bar; only the links collapse */
+    .nav-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h); left: 0; right: 0;
+      padding: 0.25rem 1.5rem 1.25rem;
+      background: var(--bg);          /* solid: the panel sits over content */
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    }
+    .nav-menu.is-open { display: block; }
+    .nav-links { flex-direction: column; gap: 0; }
+    .nav-links a { display: block; padding: 0.95rem 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+    .nav-call { padding: 0.5rem 0.7rem; font-size: 0.82rem; }
+  }
+
+  /* Below ~430px the bar cannot hold wordmark + number + toggle, so the
+     call button drops to its icon and keeps its accessible name. */
+  @media (max-width: 430px) {
+    .nav-call-label { display: none; }
+    .nav-call { padding: 0.55rem 0.65rem; }
+    .nav-call .icon { font-size: 1.15rem; }
+    .people { grid-template-columns: 1fr; }
+    .hero-actions .btn { flex: 1 1 auto; justify-content: center; }
+  }
+
+  @media (max-width: 400px) {
+    .shell { padding: 0 1.1rem; }
+    .cell, .person { padding: 1.6rem 1.4rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: .001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+    }
+    .rise { opacity: 1 !important; transform: none !important; }
+  }
 </style>
+<noscript><style>.rise { opacity: 1 !important; transform: none !important; }</style></noscript>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">NIDAROS <span>LYD</span></div>
-  <ul class="nav-links">
-    <li><a href="#kontakt">Kontakt</a></li>
-    <li><a href="#adresse">Adresse</a></li>
-  </ul>
-</nav>
+<a class="skip-link" href="#hovedinnhold">Hopp til innhold</a>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg">
-    <svg viewBox="0 0 1440 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stop-color="#3a7a1e" stop-opacity="0"/>
-          <stop offset="25%"  stop-color="#6EE040" stop-opacity="0.9"/>
-          <stop offset="50%"  stop-color="#c8f000" stop-opacity="0.7"/>
-          <stop offset="75%"  stop-color="#6EE040" stop-opacity="0.9"/>
-          <stop offset="100%" stop-color="#3a7a1e" stop-opacity="0"/>
-        </linearGradient>
-        <linearGradient id="wg2" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stop-color="#f07000" stop-opacity="0"/>
-          <stop offset="40%"  stop-color="#f0a000" stop-opacity="0.5"/>
-          <stop offset="60%"  stop-color="#f07000" stop-opacity="0.4"/>
-          <stop offset="100%" stop-color="#f07000" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <!-- Main wave -->
-      <path d="M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110"
-            fill="none" stroke="url(#wg)" stroke-width="3">
-        <animate attributeName="d"
-          dur="6s" repeatCount="indefinite"
-          values="
-            M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110;
-            M0,130 C200,80 320,150 520,90 C720,30 800,170 1000,120 C1200,70 1300,140 1440,100;
-            M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110"
-        />
-      </path>
-      <!-- Secondary wave -->
-      <path d="M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130"
-            fill="none" stroke="url(#wg2)" stroke-width="1.5" opacity="0.7">
-        <animate attributeName="d"
-          dur="9s" repeatCount="indefinite"
-          values="
-            M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130;
-            M0,120 C180,160 340,90 560,140 C780,190 920,80 1120,120 C1320,160 1400,100 1440,120;
-            M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130"
-        />
-      </path>
-      <!-- Glow wave -->
-      <path d="M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110"
-            fill="none" stroke="url(#wg)" stroke-width="12" opacity="0.08">
-      </path>
-    </svg>
-  </div>
+<!-- Icon sprite. Phosphor Icons (regular), MIT licensed. https://phosphoricons.com -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-phone" viewBox="0 0 256 256"><path fill="currentColor" d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46ZM176,208A128.14,128.14,0,0,1,48,80,40.2,40.2,0,0,1,82.87,40a.61.61,0,0,0,0,.12l21,47L83.2,111.86a6.13,6.13,0,0,0-.57.77,16,16,0,0,0-1,15.7c9.06,18.53,27.73,37.06,46.46,46.11a16,16,0,0,0,15.75-1.14,8.44,8.44,0,0,0,.74-.56L168.89,152l47,21.05h0s.08,0,.11,0A40.21,40.21,0,0,1,176,208Z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 256 256"><path fill="currentColor" d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 256 256"><path fill="currentColor" d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"/></symbol>
+  <symbol id="i-store" viewBox="0 0 256 256"><path fill="currentColor" d="M232,96a7.89,7.89,0,0,0-.3-2.2L217.35,43.6A16.07,16.07,0,0,0,202,32H54A16.07,16.07,0,0,0,38.65,43.6L24.31,93.8A7.89,7.89,0,0,0,24,96h0v16a40,40,0,0,0,16,32v72a8,8,0,0,0,8,8H208a8,8,0,0,0,8-8V144a40,40,0,0,0,16-32V96ZM54,48H202l11.42,40H42.61Zm50,56h48v8a24,24,0,0,1-48,0Zm-16,0v8a24,24,0,0,1-35.12,21.26,7.88,7.88,0,0,0-1.82-1.06A24,24,0,0,1,40,112v-8ZM200,208H56V151.2a40.57,40.57,0,0,0,8,.8,40,40,0,0,0,32-16,40,40,0,0,0,64,0,40,40,0,0,0,32,16,40.57,40.57,0,0,0,8-.8Zm4.93-75.8a8.08,8.08,0,0,0-1.8,1.05A24,24,0,0,1,168,112v-8h48v8A24,24,0,0,1,204.93,132.2Z"/></symbol>
+  <symbol id="i-plugs" viewBox="0 0 256 256"><path fill="currentColor" d="M149.66,138.34a8,8,0,0,0-11.32,0L120,156.69,99.31,136l18.35-18.34a8,8,0,0,0-11.32-11.32L88,124.69,69.66,106.34a8,8,0,0,0-11.32,11.32L64.69,124,41.37,147.31a32,32,0,0,0,0,45.26l5.38,5.37-28.41,28.4a8,8,0,0,0,11.32,11.32l28.4-28.41,5.37,5.38a32,32,0,0,0,45.26,0L132,191.31l6.34,6.35a8,8,0,0,0,11.32-11.32L131.31,168l18.35-18.34A8,8,0,0,0,149.66,138.34Zm-52.29,65a16,16,0,0,1-22.62,0L52.69,181.25a16,16,0,0,1,0-22.62L76,135.31,120.69,180Zm140.29-185a8,8,0,0,0-11.32,0l-28.4,28.41-5.37-5.38a32.05,32.05,0,0,0-45.26,0L124,64.69l-6.34-6.35a8,8,0,0,0-11.32,11.32l80,80a8,8,0,0,0,11.32-11.32L191.31,132l23.32-23.31a32,32,0,0,0,0-45.26l-5.38-5.37,28.41-28.4A8,8,0,0,0,237.66,18.34Zm-34.35,79L180,120.69,135.31,76l23.32-23.31a16,16,0,0,1,22.62,0l22.06,22A16,16,0,0,1,203.31,97.37Z"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 256 256"><path fill="currentColor" d="M226.76,69a8,8,0,0,0-12.84-2.88l-40.3,37.19-17.23-3.7-3.7-17.23,37.19-40.3A8,8,0,0,0,187,29.24,72,72,0,0,0,88,96,72.34,72.34,0,0,0,94,124.94L33.79,177c-.15.12-.29.26-.43.39a32,32,0,0,0,45.26,45.26c.13-.13.27-.28.39-.42L131.06,162A72,72,0,0,0,232,96,71.56,71.56,0,0,0,226.76,69ZM160,152a56.14,56.14,0,0,1-27.07-7,8,8,0,0,0-9.92,1.77L67.11,211.51a16,16,0,0,1-22.62-22.62L109.18,133a8,8,0,0,0,1.77-9.93,56,56,0,0,1,58.36-82.31l-31.2,33.81a8,8,0,0,0-1.94,7.1L141.83,108a8,8,0,0,0,6.14,6.14l26.35,5.66a8,8,0,0,0,7.1-1.94l33.81-31.2A56.06,56.06,0,0,1,160,152Z"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 256 256"><path fill="currentColor" d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 256 256"><path fill="currentColor" d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol>
+  <symbol id="i-arrow-out" viewBox="0 0 256 256"><path fill="currentColor" d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 256 256"><path fill="currentColor" d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 256 256"><path fill="currentColor" d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></symbol>
+</svg>
 
-  <p class="hero-label">Trondheim · Heimdal</p>
-  <h1 class="hero-title">NIDAROS <span>LYD</span></h1>
-  <p class="hero-tagline">Vi jobber med noe som låter bra – følg med!</p>
-  <div class="hero-cta">
-    <a href="#kontakt" class="btn-primary">Ta kontakt</a>
-    <a href="tel:+4797974500" class="btn-ghost">+47 979 74 500</a>
-  </div>
-</section>
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<header class="nav">
+  <div class="shell nav-inner">
+    <a class="wordmark" href="#hovedinnhold">NIDAROS <span>LYD</span></a>
 
-<!-- SERVICES STRIP -->
-<div class="services-strip">
-  <div class="service-item">
-    <div class="service-icon">🛒</div>
-    <div class="service-name">Salg</div>
-  </div>
-  <div class="service-item">
-    <div class="service-icon">🔧</div>
-    <div class="service-name">Installasjon</div>
-  </div>
-  <div class="service-item">
-    <div class="service-icon">⚙️</div>
-    <div class="service-name">Service</div>
-  </div>
-</div>
+    <nav class="nav-menu" id="hovedmeny" aria-label="Hovedmeny">
+      <ul class="nav-links">
+        <li><a href="#tjenester">Tjenester</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+        <li><a href="#adresse">Adresse</a></li>
+      </ul>
+    </nav>
 
-<!-- TEAM / CONTACT -->
-<section id="kontakt">
-  <div class="section-inner">
-    <p class="section-tag">Teamet vårt</p>
-    <h2 class="section-title">Kontakt oss</h2>
-
-    <div class="team-grid">
-      <!-- Prosjektledere -->
-      <div class="team-card">
-        <div class="team-role">Prosjektleder</div>
-        <div class="team-name">Sindre Eikli</div>
-        <a class="team-phone" href="tel:92699009">📞 926 99 009</a>
-        <a class="team-email" href="mailto:sindre@nidaroslyd.no">✉ sindre@nidaroslyd.no</a>
-      </div>
-
-      <div class="team-card">
-        <div class="team-role">Prosjektleder</div>
-        <div class="team-name">Steffen Wevang Karlsen</div>
-        <a class="team-phone" href="tel:46614343">📞 466 14 343</a>
-        <a class="team-email" href="mailto:steffen@nidaroslyd.no">✉ steffen@nidaroslyd.no</a>
-      </div>
-
-      <div class="team-card">
-        <div class="team-role">Prosjektleder</div>
-        <div class="team-name">Arnstein Fossvik</div>
-        <a class="team-phone" href="tel:90746505">📞 907 46 505</a>
-        <a class="team-email" href="mailto:arnstein@nidaroslyd.no">✉ arnstein@nidaroslyd.no</a>
-      </div>
-
-      <div class="team-card" style="background: #141a10; border-left: 2px solid var(--green);">
-        <div class="team-role">Daglig leder</div>
-        <div class="team-name">Magnus Galguften</div>
-        <a class="team-phone" href="tel:41841075">📞 418 41 075</a>
-        <a class="team-email" href="mailto:magnus@nidaroslyd.no">✉ magnus@nidaroslyd.no</a>
-      </div>
+    <div class="nav-actions">
+      <a class="nav-call" href="tel:+4797974500" aria-label="Ring 979 74 500">
+        <svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>
+        <span class="nav-call-label">979 74 500</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="hovedmeny" aria-label="Meny">
+        <svg class="icon icon-open" aria-hidden="true"><use href="#i-menu"></use></svg>
+        <svg class="icon icon-close" aria-hidden="true"><use href="#i-close"></use></svg>
+      </button>
     </div>
   </div>
-</section>
+</header>
 
-<!-- ADDRESS -->
-<section id="adresse">
-  <div class="section-inner">
-    <p class="section-tag">Finn oss</p>
-    <h2 class="section-title">Adresse</h2>
+<main id="hovedinnhold">
 
-    <div class="address-grid">
+  <!-- ── HERO ───────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="shell hero-grid">
       <div>
-        <div class="address-label">Besøksadresse</div>
-        <p>
-          Nidaros Lyd AS<br>
-          Heggstadmoen 51<br>
-          7080 Heimdal
+        <p class="eyebrow rise">Trondheim og Trøndelag</p>
+        <h1 class="display hero-title rise d1">Lydanlegg som <em>låter bra</em></h1>
+        <p class="lede hero-lede rise d2">
+          Salg, installasjon og service av lyd- og AV-anlegg for bedrifter,
+          arrangører og offentlige bygg i Trøndelag.
         </p>
-        <br>
-        <div class="address-label">Kontakt</div>
-        <p>
-          Tlf: <a href="tel:+4797974500">+47 979 74 500</a><br>
-          Org.nr: 935 096 588 MVA
-        </p>
+        <div class="hero-actions rise d3">
+          <a class="btn btn-primary" href="#kontakt">
+            Ta kontakt
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+          </a>
+          <a class="btn btn-ghost" href="tel:+4797974500">
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>
+            979 74 500
+          </a>
+        </div>
       </div>
-      <div id="map"></div>
+
+      <div class="hero-visual rise d2">
+        <div class="frame hero-frame">
+          <!-- TODO: bytt ut med eget bilde, 1200x1500, av et anlegg Nidaros Lyd har montert -->
+          <img src="https://picsum.photos/seed/nidaroslyd-hero/1200/1500"
+               alt="Lydanlegg montert i et større rom"
+               width="1200" height="1500" fetchpriority="high" decoding="async">
+          <div class="hero-wave" aria-hidden="true">
+            <svg viewBox="0 0 1440 220" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="wave-main" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%"   stop-color="#3a7a1e" stop-opacity="0"/>
+                  <stop offset="28%"  stop-color="#6ee040" stop-opacity="0.95"/>
+                  <stop offset="72%"  stop-color="#6ee040" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#3a7a1e" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="wave-second" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%"   stop-color="#3a7a1e" stop-opacity="0"/>
+                  <stop offset="50%"  stop-color="#3a7a1e" stop-opacity="0.75"/>
+                  <stop offset="100%" stop-color="#3a7a1e" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110"
+                    fill="none" stroke="url(#wave-main)" stroke-width="3">
+                <animate attributeName="d" dur="6s" repeatCount="indefinite" values="
+                  M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110;
+                  M0,130 C200,80 320,150 520,90 C720,30 800,170 1000,120 C1200,70 1300,140 1440,100;
+                  M0,110 C160,60 280,170 480,100 C680,30 760,190 960,110 C1160,30 1280,160 1440,110"/>
+              </path>
+              <path d="M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130"
+                    fill="none" stroke="url(#wave-second)" stroke-width="1.5">
+                <animate attributeName="d" dur="9s" repeatCount="indefinite" values="
+                  M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130;
+                  M0,120 C180,160 340,90 560,140 C780,190 920,80 1120,120 C1320,160 1400,100 1440,120;
+                  M0,140 C200,100 360,180 560,120 C760,60 900,170 1100,130 C1300,90 1380,150 1440,130"/>
+              </path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATUS ─────────────────────────────────────────────── -->
+  <div class="band">
+    <div class="shell band-inner">
+      <svg class="icon" aria-hidden="true"><use href="#i-wave"></use></svg>
+      <p>Nettsiden er under arbeid. Kontaktinformasjon og adresse er oppdatert.</p>
     </div>
   </div>
-</section>
 
-<!-- FOOTER -->
+  <!-- ── TJENESTER ──────────────────────────────────────────── -->
+  <section id="tjenester">
+    <div class="shell">
+      <div class="section-head rise">
+        <h2 class="display section-title">Dette gjør vi</h2>
+        <p class="lede">Fra første befaring til anlegget står ferdig innstilt, og videre gjennom hele levetiden.</p>
+      </div>
+
+      <div class="bento rise d1">
+        <article class="cell cell-lead">
+          <div class="cell-media" aria-hidden="true">
+            <!-- TODO: bytt ut med eget bilde fra en montasje, 1200x900 -->
+            <img src="https://picsum.photos/seed/nidaroslyd-montasje/1200/900" alt="" width="1200" height="900" loading="lazy" decoding="async">
+          </div>
+          <svg class="icon cell-icon" aria-hidden="true"><use href="#i-plugs"></use></svg>
+          <h3 class="cell-title">Installasjon</h3>
+          <p class="cell-body">Vi prosjekterer, trekker kabel, monterer og setter opp anlegget ferdig innstilt for rommet det står i.</p>
+        </article>
+
+        <article class="cell cell-wash">
+          <svg class="icon cell-icon" aria-hidden="true"><use href="#i-store"></use></svg>
+          <h3 class="cell-title">Salg</h3>
+          <p class="cell-body">Høyttalere, mikser, mikrofoner og AV-utstyr, valgt ut fra rommet og budsjettet.</p>
+        </article>
+
+        <article class="cell">
+          <svg class="icon cell-icon" aria-hidden="true"><use href="#i-wrench"></use></svg>
+          <h3 class="cell-title">Service</h3>
+          <p class="cell-body">Feilsøking, reparasjon og vedlikehold av anlegg, også de vi ikke har levert selv.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── KONTAKT ────────────────────────────────────────────── -->
+  <section id="kontakt">
+    <div class="shell">
+      <div class="section-head rise">
+        <h2 class="display section-title">Kontakt oss</h2>
+        <p class="lede">Ring en av oss direkte, eller bruk sentralbordet på 979 74 500.</p>
+      </div>
+
+      <div class="people rise d1">
+        <article class="person">
+          <p class="person-role">Prosjektleder</p>
+          <h3 class="person-name">Sindre Eikli</h3>
+          <a class="person-link person-tel" href="tel:+4792699009">
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>926 99 009
+          </a>
+          <a class="person-link person-mail" href="mailto:sindre@nidaroslyd.no">
+            <svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg>sindre@nidaroslyd.no
+          </a>
+        </article>
+
+        <article class="person">
+          <p class="person-role">Prosjektleder</p>
+          <h3 class="person-name">Steffen Wevang Karlsen</h3>
+          <a class="person-link person-tel" href="tel:+4746614343">
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>466 14 343
+          </a>
+          <a class="person-link person-mail" href="mailto:steffen@nidaroslyd.no">
+            <svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg>steffen@nidaroslyd.no
+          </a>
+        </article>
+
+        <article class="person">
+          <p class="person-role">Prosjektleder</p>
+          <h3 class="person-name">Arnstein Fossvik</h3>
+          <a class="person-link person-tel" href="tel:+4790746505">
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>907 46 505
+          </a>
+          <a class="person-link person-mail" href="mailto:arnstein@nidaroslyd.no">
+            <svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg>arnstein@nidaroslyd.no
+          </a>
+        </article>
+
+        <article class="person is-lead">
+          <p class="person-role">Daglig leder</p>
+          <h3 class="person-name">Magnus Galguften</h3>
+          <a class="person-link person-tel" href="tel:+4741841075">
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>418 41 075
+          </a>
+          <a class="person-link person-mail" href="mailto:magnus@nidaroslyd.no">
+            <svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg>magnus@nidaroslyd.no
+          </a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ADRESSE ────────────────────────────────────────────── -->
+  <section id="adresse">
+    <div class="shell">
+      <div class="section-head rise">
+        <h2 class="display section-title">Adresse</h2>
+      </div>
+
+      <div class="address-grid rise d1">
+        <div>
+          <p class="address-label">Besøksadresse</p>
+          <address class="address-block" style="font-style: normal;">
+            Nidaros Lyd AS<br>
+            Heggstadmoen 51<br>
+            7080 Heimdal
+          </address>
+
+          <p class="address-label">Kontakt</p>
+          <div class="address-block">
+            Tlf: <a href="tel:+4797974500">979 74 500</a><br>
+            Org.nr: 935 096 588 MVA
+          </div>
+
+          <a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Heggstadmoen+51%2C+7080+Heimdal" target="_blank" rel="noopener">
+            Åpne i kart
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow-out"></use></svg>
+          </a>
+        </div>
+
+        <div id="map">
+          <div class="map-fallback">
+            <p>Heggstadmoen 51, 7080 Heimdal</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── FOOTER ───────────────────────────────────────────────── -->
 <footer>
-  <div class="footer-logo">NIDAROS <span>LYD</span></div>
-  <div class="footer-meta">
-    Nidaros Lyd AS · Org.nr 935 096 588 MVA<br>
-    Heggstadmoen 51, 7080 Heimdal
+  <div class="shell footer-grid">
+    <div class="wordmark">NIDAROS <span>LYD</span></div>
+    <ul class="footer-nav">
+      <li><a href="#tjenester">Tjenester</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="#adresse">Adresse</a></li>
+    </ul>
+    <div class="footer-meta">
+      Nidaros Lyd AS · Org.nr 935 096 588 MVA<br>
+      Heggstadmoen 51, 7080 Heimdal
+    </div>
   </div>
 </footer>
 
-<!-- Leaflet -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
 <script>
-  // Heggstadmoen 51, 7080 Heimdal
-  const lat = 63.330624, lng = 10.351045;
+(function () {
+  'use strict';
 
-  const map = L.map('map', { zoomControl: false, scrollWheelZoom: false }).setView([lat, lng], 15);
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    document.body.classList.add('no-motion');
+    // SMIL animations in the waveform cannot be stopped from CSS.
+    document.querySelectorAll('svg').forEach(function (svg) {
+      if (typeof svg.pauseAnimations === 'function') svg.pauseAnimations();
+    });
+  }
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom: 19
-  }).addTo(map);
+  /* Mobile menu ------------------------------------------------ */
+  var toggle = document.querySelector('.nav-toggle');
+  var menu = document.getElementById('hovedmeny');
 
-  L.control.zoom({ position: 'bottomright' }).addTo(map);
+  function closeMenu() {
+    toggle.setAttribute('aria-expanded', 'false');
+    menu.classList.remove('is-open');
+  }
 
-  // Custom green pulse marker
-  const icon = L.divIcon({
-    className: '',
-    html: '<div class="pulse-marker"></div>',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
-    popupAnchor: [0, -12]
+  if (toggle && menu) {
+    toggle.addEventListener('click', function () {
+      var open = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!open));
+      menu.classList.toggle('is-open', !open);
+    });
+    menu.addEventListener('click', function (e) {
+      if (e.target.closest('a')) closeMenu();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.nav')) closeMenu();
+    });
+  }
+
+  /* Scroll reveal: sequences the page as the reader arrives ----- */
+  var risers = document.querySelectorAll('.rise');
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    risers.forEach(function (el) { el.classList.add('is-in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-in');
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    risers.forEach(function (el) { io.observe(el); });
+  }
+
+  /* Map -------------------------------------------------------- */
+  var LAT = 63.330624;
+  var LNG = 10.351045;
+  var mapEl = document.getElementById('map');
+
+  // Error state: if Leaflet never arrives, the address stays usable.
+  function mapFallback() {
+    if (!mapEl) return;
+    mapEl.removeAttribute('role');
+    mapEl.removeAttribute('aria-label');
+  }
+
+  window.addEventListener('load', function () {
+    if (typeof L === 'undefined' || !mapEl) { mapFallback(); return; }
+
+    try {
+      mapEl.innerHTML = '';
+      mapEl.setAttribute('role', 'img');
+      mapEl.setAttribute('aria-label', 'Kart som viser Heggstadmoen 51, 7080 Heimdal');
+      var map = L.map(mapEl, { zoomControl: false, scrollWheelZoom: false }).setView([LAT, LNG], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+      }).addTo(map);
+
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+      L.marker([LAT, LNG], {
+        title: 'Nidaros Lyd AS',
+        icon: L.divIcon({
+          className: '',
+          html: '<div class="pulse-marker"></div>',
+          iconSize: [16, 16],
+          iconAnchor: [8, 8],
+          popupAnchor: [0, -12]
+        })
+      })
+        .addTo(map)
+        .bindPopup('<strong>Nidaros Lyd AS</strong><br>Heggstadmoen 51, 7080 Heimdal')
+        .openPopup();
+    } catch (err) {
+      mapEl.innerHTML =
+        '<div class="map-fallback">' +
+          '<p>Kartet kunne ikke lastes.</p>' +
+          '<p>Heggstadmoen 51, 7080 Heimdal</p>' +
+        '</div>';
+      mapFallback();
+    }
   });
-
-  L.marker([lat, lng], { icon })
-    .addTo(map)
-    .bindPopup('<strong>Nidaros Lyd AS</strong><br>Heggstadmoen 51, 7080 Heimdal')
-    .openPopup();
+})();
 </script>
 </body>
 </html>
